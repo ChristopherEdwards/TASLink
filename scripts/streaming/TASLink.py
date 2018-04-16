@@ -53,6 +53,7 @@ class RunStatus(object):
     dpcmState = None
     windowState = None
     frameCount = 0
+    everDrive = False
 
 def readint(question):
     num = -1
@@ -486,6 +487,39 @@ class CLI(cmd.Cmd):
         time.sleep(1)
         self.do_on(data)
         print("The restart process is complete!")
+
+    def do_insert_everdrive(self,data):
+        """Insert commands that control the EverDrive"""
+        # print options
+        if not runStatuses:
+            print("No currently active runs.")
+            return False
+        if data != "":
+            try:
+                runID = int(data)
+            except ValueError:
+                print("ERROR: Invalid run number!")
+                pass
+            if 0 < runID <= len(runStatuses):  # confirm valid run number
+                pass
+            else:
+                print("ERROR: Invalid run number!")
+                return False
+        else:
+            runID = selected_run + 1
+        index = runID - 1
+        run = runStatuses[index].tasRun
+        if not runStatuses[index].everDrive:
+            while True:
+                everdrive = raw_input("Do you want to insert the EverDrive command sequence?")
+                if save == 'y':
+                    runStatuses[index].everDrive = True
+                    break
+                elif save == 'n':
+                    break
+                else:
+                    print("ERROR: Could not interpret response.")
+        print(yaml.dump(runstatus.tasRun))
 
     def do_modify_frames(self, data):
         """Modify the initial blank input frames"""
